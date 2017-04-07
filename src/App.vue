@@ -1,12 +1,27 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <transition :name="transitionName">
+      <router-view class="child-view"></router-view>
+    </transition>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'app'
+  name: 'app',
+  data () {
+    return {
+      transitionName: 'slide-left',
+      showLoading: false
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      const toDepth = to.path.split('/').length
+      const fromDepth = from.path.split('/').length
+      this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+    }
+  }
 }
 </script>
 
@@ -17,5 +32,43 @@ export default {
     width:100%;
     height:100%;
     font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+  .child-view {
+    transition: transform .5s cubic-bezier(.55, 0, .1, 1), opacity .5s cubic-bezier(.55, 0, .1, 1);
+  }
+
+  .slide-left-enter-active {
+    height: 100%;
+  }
+
+  .slide-left-enter, .slide-right-leave-active {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100% !important;
+    -webkit-transform: translate(30px, 0);
+    transform: translate(30px, 0);
+  }
+
+  .slide-left-enter #newItem {
+    opacity: 0 !important;
+  }
+
+  .slide-left-enter-active .empty, .slide-right-enter-active .empty {
+    opacity: 0 !important;
+  }
+
+  .slide-right-enter-active {
+    height: 100% !important;
+  }
+
+  .slide-left-leave-active, .slide-right-enter {
+    opacity: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    -webkit-transform: translate(-30px, 0);
+    transform: translate(-30px, 0);
   }
 </style>
