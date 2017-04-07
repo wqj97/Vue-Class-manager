@@ -11,8 +11,7 @@ export default {
   name: 'app',
   data () {
     return {
-      transitionName: 'slide-left',
-      showLoading: false
+      transitionName: 'slide-left'
     }
   },
   watch: {
@@ -32,6 +31,10 @@ export default {
     width:100%;
     height:100%;
     font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+  #app{
+    width:100%;
+    height:100%;
   }
   .child-view {
     transition: transform .5s cubic-bezier(.55, 0, .1, 1), opacity .5s cubic-bezier(.55, 0, .1, 1);
@@ -70,5 +73,14 @@ export default {
     position: absolute;
     -webkit-transform: translate(-30px, 0);
     transform: translate(-30px, 0);
+  }
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+    position: absolute;
+    left: 25%;
+  }
+  .fade-enter, .fade-leave-active {
+    opacity: 0
   }
 </style>

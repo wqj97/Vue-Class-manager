@@ -32,7 +32,6 @@
 </template>
 
 <script>
-  import $ from 'webpack-zepto'
   export default {
     name: 'Index',
     data () {
@@ -48,9 +47,7 @@
         if (this.number === '' || this.pwd === '') {
           return
         } else {
-          $('.form-group').addClass('login').on('webkettransitionend', function () {
-            console.log(1)
-          })
+          this.$router.push('home')
         }
       }
     }
@@ -66,14 +63,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    perspective: 200px;
     .form-group {
-      transition: 2s cubic-bezier(1, 0, 0.5, 1);
-      /*transform-style: preserve-3d;*/
-      &.login{
-        transform: translateZ(201px);
-        opacity: 0;
-      }
       width: 80%;
       height: 75%;
       border-radius: 10px;

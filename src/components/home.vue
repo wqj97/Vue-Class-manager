@@ -1,13 +1,29 @@
 <template>
   <div class="Home">
+    <menu-panel></menu-panel>
+    <transition name="fade">
+      <router-view class="Main"></router-view>
+    </transition>
   </div>
 </template>
 
 <script>
+  import MenuPanel from './MenuPannel.vue'
   export default {
-    name: 'Home'
+    name: 'Home',
+    components: {
+      MenuPanel
+    }
   }
 </script>
 
-<style lang="sass" type="text/scss">
+<style lang="scss" type="text/scss">
+  .Home{
+    height:100%;
+  }
+  .Main{
+    width:75%;
+    float: left;
+    transition: transform .5s cubic-bezier(.55, 0, .1, 1), opacity .5s cubic-bezier(.55, 0, .1, 1);
+  }
 </style>
