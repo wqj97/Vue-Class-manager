@@ -23,7 +23,13 @@
   }
   .Main{
     width:75%;
+    height:100%;
     float: left;
     transition: transform .5s cubic-bezier(.55, 0, .1, 1), opacity .5s cubic-bezier(.55, 0, .1, 1);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to bottom, #f47f91, #d65577);
   }
 </style>

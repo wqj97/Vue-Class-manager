@@ -81,6 +81,6 @@ export default {
     left: 25%;
   }
   .fade-enter, .fade-leave-active {
-    opacity: 0
+    opacity: 0.3
   }
 </style>
