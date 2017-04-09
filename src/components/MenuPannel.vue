@@ -11,6 +11,7 @@
     </div>
     <div class="menu-list">
       <ul>
+        <router-link to="/home"><li>首页</li></router-link>
         <router-link to="/home/before"><li>课前预习</li></router-link>
         <router-link to="/home/doing" class="disable"><li>课堂试练</li></router-link>
         <router-link to="/home/after"><li>课后作业</li></router-link>

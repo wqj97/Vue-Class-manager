@@ -6,7 +6,7 @@
           <img src="../assets/c#.svg" alt="">
         </p>
         <p>
-          教学管理系统
+          实验教学管理系统
         </p>
       </div>
       <div class="form-content">

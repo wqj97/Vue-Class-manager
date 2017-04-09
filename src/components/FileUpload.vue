@@ -12,6 +12,9 @@
       </div>
     </div>
     <div class="uploader-right">
+      <div class="prew-step" @click="prewStep">
+        <span>←</span> 上一步
+      </div>
       <div class="uploader-title">
         上传作业
       </div>
@@ -64,6 +67,9 @@
       },
       fileChoosed (el) {
         console.log(el)
+      },
+      prewStep () {
+        history.go(-1)
       }
     }
   }
@@ -111,6 +117,13 @@
       flex-wrap: wrap;
       flex-direction: column;
       color: #fff;
+      position: relative;
+      .prew-step{
+        top: 15px;
+        left: 15px;
+        cursor: pointer;
+        position: absolute;
+      }
       .uploader-title {
         margin-bottom: 30px;
       }
