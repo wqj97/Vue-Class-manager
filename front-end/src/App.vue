@@ -7,35 +7,37 @@
 </template>
 
 <script>
-export default {
-  name: 'app',
-  data () {
-    return {
-      transitionName: 'slide-left'
-    }
-  },
-  watch: {
-    '$route' (to, from) {
-      const toDepth = to.path.split('/').length
-      const fromDepth = from.path.split('/').length
-      this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+  export default {
+    name: 'app',
+    data () {
+      return {
+        transitionName: 'slide-left'
+      }
+    },
+    watch: {
+      '$route' (to, from) {
+        const toDepth = to.path.split('/').length
+        const fromDepth = from.path.split('/').length
+        this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+      }
     }
   }
-}
 </script>
 
 <style type="text/css" rel="stylesheet/scss" lang="scss">
-  html,body {
+  html, body {
     padding: 0;
     margin: 0;
-    width:100%;
-    height:100%;
-    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    width: 100%;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   }
-  #app{
-    width:100%;
-    height:100%;
+
+  #app {
+    width: 100%;
+    height: 100%;
   }
+
   .child-view {
     transition: transform .5s cubic-bezier(.55, 0, .1, 1), opacity .5s cubic-bezier(.55, 0, .1, 1);
   }
@@ -80,7 +82,25 @@ export default {
     position: absolute;
     left: 25%;
   }
+
   .fade-enter, .fade-leave-active {
     opacity: 0.3
+  }
+
+  .grow-enter {
+    height: 0 !important;
+  }
+
+  .grow-enter-active {
+    transition: all .3s ease;
+    height: 100px;
+  }
+
+  .grow-leave {
+    height: 100px;
+  }
+  .grow-leave-active {
+    transition: all .3s ease;
+    height: 0;
   }
 </style>

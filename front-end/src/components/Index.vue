@@ -11,12 +11,17 @@
       </div>
       <div class="form-content">
         <div class="form-inputer">
+          <transition name="grow">
+            <div class="form-error" v-if="error">
+              账号或密码错误
+            </div>
+          </transition>
           <div class="form-each">
-            <input type="text" v-model="number" :class="{error : check == true && number == ''}">
+            <input type="text" v-model="number" :class="{error : check == true && number == '' || error == true}">
             <label>学号</label>
           </div>
           <div class="form-each">
-            <input type="password" v-model="pwd" :class="{error : check == true && pwd == ''}">
+            <input type="password" v-model="pwd" :class="{error : check == true && pwd == '' || error == true}">
             <label>密码</label>
           </div>
         </div>
@@ -38,7 +43,8 @@
       return {
         number: '',
         pwd: '',
-        check: false
+        check: false,
+        error: false
       }
     },
     methods: {
@@ -47,7 +53,15 @@
         if (this.number === '' || this.pwd === '') {
           return
         } else {
-          this.$router.push('home')
+          this.$http.post('/user/oauth', {
+            number: this.number,
+            pwd: this.pwd
+          }).then(() => {
+            this.error = false
+            this.$router.push('home')
+          }, () => {
+            this.error = true
+          })
         }
       }
     }
@@ -70,6 +84,10 @@
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
       background: white;
       display: flex;
+      .form-error{
+        height:100px;
+        color: #ff413a;
+      }
       .form-left {
         width: 45%;
         height: 110%;

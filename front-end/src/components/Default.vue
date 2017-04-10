@@ -13,6 +13,9 @@
         </div>
       </div>
       <div class="uploader-right">
+        <div class="homework-name">
+          实验一
+        </div>
         <router-link to="/home/before">
           <div class="steep-each">
             课前预习: 未完成
