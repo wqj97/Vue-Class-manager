@@ -22,8 +22,8 @@
         <div class="form-content">
           <div class="form-each">
             <label>作业文件(压缩文件)</label>
-            <input type="text" @click="chooseFile" placeholder="点击选择文件上传">
-            <input type="file" id="fileInputer" @change="fileChoosed(this)">
+            <input type="text" @click="chooseFile" placeholder="点击选择文件上传" v-model="fileObj.name">
+            <input type="file" id="fileInputer" @change="fileChoosed()" ref="fileInput">
           </div>
         </div>
         <div class="form-footer">
@@ -45,7 +45,8 @@
     name: 'FileUpload',
     data () {
       return {
-        uploadted: false
+        uploadted: false,
+        fileObj: ''
       }
     },
     props: {
@@ -56,17 +57,23 @@
       content: {
         require: true,
         default: ''
-      }
+      },
+      progress: 0
     },
     methods: {
       upload () {
-        console.log(1)
+        let form = new FormData()
+        form.append('progress', this.progress)
+        form.append('file', this.fileObj)
+        this.$http.post('/file/upload', form).then(response => {
+          console.log(response)
+        })
       },
       chooseFile () {
         $('#fileInputer').click()
       },
-      fileChoosed (el) {
-        console.log(el)
+      fileChoosed () {
+        this.fileObj = this.$refs.fileInput.files[0]
       },
       prewStep () {
         history.go(-1)

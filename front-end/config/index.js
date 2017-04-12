@@ -28,11 +28,15 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/user' : {
+      '/user': {
         target: 'http://classAdmin/',
         changeOrigin: true
       },
-      '/file' : {
+      '/file': {
+        target: 'http://classAdmin/',
+        changeOrigin: true
+      },
+      '/index': {
         target: 'http://classAdmin/',
         changeOrigin: true
       }

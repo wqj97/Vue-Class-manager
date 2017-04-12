@@ -1,6 +1,6 @@
 <template>
   <div class="Home">
-    <menu-panel></menu-panel>
+    <menu-panel :userInfo="homeInfo.user_nfo"></menu-panel>
     <transition name="fade">
       <router-view class="Main"></router-view>
     </transition>
@@ -11,8 +11,19 @@
   import MenuPanel from './MenuPannel.vue'
   export default {
     name: 'Home',
+    data () {
+      return {
+        homeInfo: ''
+      }
+    },
     components: {
       MenuPanel
+    },
+    created () {
+      this.$http.get('/index/home').then(response => {
+        this.homeInfo = response.body
+        this.homeInfo.class_info.C_content = JSON.parse(this.homeInfo.class_info.C_content)
+      })
     }
   }
 </script>
