@@ -105,7 +105,15 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
         <div class="box-header">
           <h3 class="box-title">实验列表</h3>
           <h3>
-            <button class="btn btn-primary">新建实验</button>
+            <select class="form-control">
+                <?php
+                $class_list = $Db->query("SELECT * FROM Class WHERE C_end_time > current_timestamp()");
+                foreach ($class_list as $class) {
+                    echo "<option value='$class[C_Id]'>$class[C_name]</option>";
+                }
+                $class_list = isset($_GET['class_id']) ? $_GET['class_id'] : $class_list[0];
+                ?>
+            </select>
           </h3>
           <div class="box-tools">
             <ul class="pagination pagination-sm no-margin pull-right">
@@ -122,26 +130,49 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
           <table class="table table-hover">
             <tbody>
             <tr>
-              <th>实验名</th>
-              <th>实验面向班级</th>
-              <th>实验创建时间</th>
-              <th>实验结束时间</th>
+              <th>参与实验学生</th>
+              <th>课前完成情况</th>
+              <th>课堂完成情况</th>
+              <th>课后完成情况</th>
               <th>操作</th>
             </tr>
             <tr>
                 <?php
-                $class_list = $Db->query("select * from Class ORDER BY C_Id DESC LIMIT $start,12");
-                foreach ($class_list as $class) {
-                    echo "<td>$class[C_name]</td>";
-                    echo "<td>$class[C_for_classes]</td>";
-                    echo "<td>$class[C_join_time]</td>";
-                    echo "<td>$class[C_end_time]</td>";
+                $student_list = [];
+                foreach (json_decode($class_list["C_for_classes"]) as $classroomNum) {
+                    $student_list_In_db = $Db->query("select * from Student where S_class = $classroomNum ORDER BY S_class DESC");
+                    foreach ($student_list_In_db as $studen_each) {
+                      $student_list[] = $studen_each;
+                    }
+                }
+                function isFinished ($key) {
+                    if (empty($student_class_state)) {
+                        return false;
+                    }
+                    foreach ($student_class_state as $progress => $val) {
+                        if ($progress == $key) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                foreach ($student_list as $student) {
+                    $student_class_state = $Db->query("select F_progress from File where F_user_id = $student[S_Id] and F_for_class_id = $class_list[C_Id]");
+
+                    echo "<tr><td>$student[S_name]</td>";
+                    for ($i = 0; $i < 3; $i++) {
+                      if (isFinished($i)){
+                          echo "<td><span class=\"badge bg-green\">完成</span></td>";
+                      } else {
+                          echo "<td><span class=\"badge bg-red\">未完成</span></td>";
+                      }
+                    }
                     echo "<td>
                     <div class=\"btn-group\">
                       <button type=\"button\" class=\"btn btn-info\" onclick='edit($class[C_Id])'>修改</button>
                       <button type=\"button\" class=\"btn btn-danger\" onclick='remove($class[C_Id])'>删除</button>
                     </div>
-                  </td>";
+                  </td></tr>";
                 }
                 ?>
             </tr>

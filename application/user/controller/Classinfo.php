@@ -12,7 +12,7 @@ namespace app\user\controller;
 use think\Db;
 use think\Debug;
 
-class ClassInfo
+class Classinfo
 {
     public function Index()
     {

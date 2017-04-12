@@ -132,7 +132,7 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
                 <?php
                 $class_list = $Db->query("select * from Class ORDER BY C_Id DESC LIMIT $start,12");
                 foreach ($class_list as $class) {
-                    echo "<td>$class[C_name]</td>";
+                    echo "<tr><td>$class[C_name]</td>";
                     echo "<td>$class[C_for_classes]</td>";
                     echo "<td>$class[C_join_time]</td>";
                     echo "<td>$class[C_end_time]</td>";
@@ -141,7 +141,7 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
                       <button type=\"button\" class=\"btn btn-info\" onclick='edit($class[C_Id])'>修改</button>
                       <button type=\"button\" class=\"btn btn-danger\" onclick='remove($class[C_Id])'>删除</button>
                     </div>
-                  </td>";
+                  </td></tr>";
                 }
                 ?>
             </tr>
