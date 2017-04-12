@@ -10,16 +10,16 @@
     </div>
     <div class="menu-list">
       <ul>
-        <router-link to="/home">
+        <router-link :to="{name: 'Default',params: classInfo}">
           <li>首页</li>
         </router-link>
-        <router-link to="/home/before">
+        <router-link :to="{name: 'Before',params: classInfo}">
           <li>课前预习</li>
         </router-link>
-        <router-link to="/home/doing" class="disable">
+        <router-link :to="{name: 'Doing',params: classInfo}">
           <li>课堂试练</li>
         </router-link>
-        <router-link to="/home/after">
+        <router-link :to="{name: 'After',params: classInfo}">
           <li>课后作业</li>
         </router-link>
       </ul>
@@ -31,7 +31,17 @@
   export default {
     name: 'MenuPanel',
     props: {
-      userInfo: ''
+      homeInfo: {
+        type: Object
+      }
+    },
+    computed: {
+      userInfo () {
+        return this.homeInfo.user_info
+      },
+      classInfo () {
+        return this.homeInfo.class_info
+      }
     }
   }
 </script>

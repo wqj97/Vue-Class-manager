@@ -16,19 +16,19 @@
         <div class="homework-name">
           实验一
         </div>
-        <router-link to="/home/before">
+        <router-link :to="{name: 'Before',params: classInfo}">
           <div class="steep-each">
-            课前预习: 未完成
+            课前预习: {{isFinished(0)}}
           </div>
         </router-link>
-        <router-link to="/home/doing">
+        <router-link :to="{name: 'Doing',params: classInfo}">
           <div class="steep-each">
-            课堂练习: 未完成
+            课堂练习: {{isFinished(1)}}
           </div>
         </router-link>
-        <router-link to="/home/after">
+        <router-link :to="{name: 'After',params: classInfo}">
           <div class="steep-each">
-            课后习题: 未完成
+            课后习题: {{isFinished(2)}}
           </div>
         </router-link>
       </div>
@@ -38,7 +38,27 @@
 
 <script>
   export default {
-    name: 'Default'
+    name: 'Default',
+    data () {
+      return {
+        classInfo: {
+          finish_state: [false, false, false]
+        }
+      }
+    },
+    created () {
+      this.$http.get('/user/classinfo').then(response => {
+        this.classInfo = response.body
+        this.classInfo.C_content = JSON.parse(this.classInfo.C_content)
+      }, () => {
+        this.$router.replace('/')
+      })
+    },
+    methods: {
+      isFinished (progress) {
+        return this.classInfo.finish_state[progress] ? '已完成' : '未完成'
+      }
+    }
   }
 </script>
 
@@ -79,6 +99,7 @@
           padding: 15px;
         }
         .uploader-logo {
+          width:50%;
           img {
             width: 100%;
           }
@@ -94,28 +115,28 @@
         flex-wrap: wrap;
         flex-direction: column;
         color: #fff;
-        a{
+        a {
           text-decoration: none;
           color: unset;
-          width:80%;
+          width: 80%;
         }
         .steep-each {
           width: 100%;
           line-height: 50px;
           margin: 15px 0;
-          border:1px solid #fff;
+          border: 1px solid #fff;
           padding: 0 15px;
           box-sizing: border-box;
           transition: .3s ease;
           border-radius: 5px;
           position: relative;
-          &:after{
+          &:after {
             content: '>';
             position: absolute;
-            right:15px;
+            right: 15px;
           }
-          &:hover{
-            background: rgba(0,0,0,0.3);
+          &:hover {
+            background: rgba(0, 0, 0, 0.3);
           }
         }
       }

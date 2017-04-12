@@ -50,15 +50,12 @@
       }
     },
     props: {
-      title: {
-        require: true,
-        default: ''
-      },
-      content: {
-        require: true,
-        default: ''
-      },
-      progress: 0
+      title: '',
+      content: '',
+      progress: ''
+    },
+    created () {
+      this.$http.get('/user/classInfo/')
     },
     methods: {
       upload () {
@@ -106,17 +103,16 @@
       flex-direction: column;
 
       .uploader-content {
-        &::-webkit-scrollbar{
-          width:5px;
+        &::-webkit-scrollbar {
+          width: 5px;
           background: transparent;
         }
-        &::-webkit-scrollbar-thumb
-        {
+        &::-webkit-scrollbar-thumb {
           border-radius: 20px;
           background-color: #fff;
         }
-        &::-webkit-scrollbar:horizontal{
-          height:0;
+        &::-webkit-scrollbar:horizontal {
+          height: 0;
           background: transparent;
         }
         padding: 15px;
@@ -124,7 +120,7 @@
         overflow: scroll;
       }
       .uploader-logo {
-        width:50%;
+        width: 50%;
         img {
           width: 100%;
         }
@@ -141,7 +137,7 @@
       flex-direction: column;
       color: #fff;
       position: relative;
-      .prew-step{
+      .prew-step {
         top: 15px;
         left: 15px;
         cursor: pointer;
@@ -155,7 +151,7 @@
       width: 80%;
       text-align: center;
       img {
-        width:100%;
+        width: 100%;
       }
       label {
         display: block;

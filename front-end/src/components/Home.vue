@@ -1,6 +1,6 @@
 <template>
   <div class="Home">
-    <menu-panel :userInfo="homeInfo.user_nfo"></menu-panel>
+    <menu-panel :homeInfo="homeInfo"></menu-panel>
     <transition name="fade">
       <router-view class="Main"></router-view>
     </transition>
@@ -13,7 +13,18 @@
     name: 'Home',
     data () {
       return {
-        homeInfo: ''
+        homeInfo: {
+          user_info: {
+            S_number: 0,
+            S_name: '',
+            S_class: ''
+          },
+          class_info: {
+            S_number: 0,
+            S_name: '',
+            S_class: ''
+          }
+        }
       }
     },
     components: {
@@ -29,12 +40,13 @@
 </script>
 
 <style lang="scss" type="text/scss">
-  .Home{
-    height:100%;
+  .Home {
+    height: 100%;
   }
-  .Main{
-    width:75%;
-    height:100%;
+
+  .Main {
+    width: 75%;
+    height: 100%;
     float: left;
     transition: transform .5s cubic-bezier(.55, 0, .1, 1), opacity .5s cubic-bezier(.55, 0, .1, 1);
     box-sizing: border-box;

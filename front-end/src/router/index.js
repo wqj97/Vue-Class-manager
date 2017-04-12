@@ -38,7 +38,7 @@ export default new Router({
         {
           path: '/home/after',
           name: 'After',
-          component: asyncImport('Before')
+          component: asyncImport('After')
         }
       ]
     }
