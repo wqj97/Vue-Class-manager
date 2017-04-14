@@ -142,10 +142,11 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
                 foreach (json_decode($class_list["C_for_classes"]) as $classroomNum) {
                     $student_list_In_db = $Db->query("select * from Student where S_class = $classroomNum ORDER BY S_class DESC");
                     foreach ($student_list_In_db as $studen_each) {
-                      $student_list[] = $studen_each;
+                        $student_list[] = $studen_each;
                     }
                 }
-                function isFinished ($key) {
+                function isFinished($key, $student_class_state)
+                {
                     if (empty($student_class_state)) {
                         return false;
                     }
@@ -156,16 +157,16 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
                     }
                     return false;
                 }
+
                 foreach ($student_list as $student) {
                     $student_class_state = $Db->query("select F_progress from File where F_user_id = $student[S_Id] and F_for_class_id = $class_list[C_Id]");
-
                     echo "<tr><td>$student[S_name]</td>";
                     for ($i = 0; $i < 3; $i++) {
-                      if (isFinished($i)){
-                          echo "<td><span class=\"badge bg-green\">完成</span></td>";
-                      } else {
-                          echo "<td><span class=\"badge bg-red\">未完成</span></td>";
-                      }
+                        if (isFinished($i, $student_class_state)) {
+                            echo "<td><span class=\"badge bg-green\">完成</span></td>";
+                        } else {
+                            echo "<td><span class=\"badge bg-red\">未完成</span></td>";
+                        }
                     }
                     echo "<td>
                     <div class=\"btn-group\">
@@ -185,6 +186,7 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
     <!-- /.content -->
   </div>
 </div>
+
 
 <!-- REQUIRED JS SCRIPTS -->
 

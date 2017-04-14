@@ -105,7 +105,7 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
         <div class="box-header">
           <h3 class="box-title">实验列表</h3>
           <h3>
-            <button class="btn btn-primary">新建实验</button>
+            <button class="btn btn-primary" onclick="$('#new_class_modal').modal()">新建实验</button>
           </h3>
           <div class="box-tools">
             <ul class="pagination pagination-sm no-margin pull-right">
@@ -155,6 +155,110 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
   </div>
 </div>
 
+<div class="modal fade" id="new_class_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">新建实验</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>实验名</label>
+          <input type="text" name="class_name" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>面向班级</label>
+            <?php
+            $class_list = $Db->query("SELECT S_class FROM Student GROUP BY S_class");
+            foreach ($class_list as $class) {
+                echo "<div class='label label-info' style='font-size: 20px;'><label>$class[S_class]: <input type='checkbox' name='class_for' value='$class[S_class]'></label></div>";
+            }
+            ?>
+        </div>
+        <div class="form-group">
+          <label>实验描述</label>
+          <div class="form-group">
+            <label>课前预习描述</label>
+            <textarea name="class_content" id="" cols="30" rows="10" class="form-control"></textarea>
+          </div>
+          <div class="form-group">
+            <label>课堂练习描述</label>
+            <textarea name="class_content" id="" cols="30" rows="10" class="form-control"></textarea>
+          </div>
+          <div class="form-group">
+            <label>课后练习描述</label>
+            <textarea name="class_content" id="" cols="30" rows="10" class="form-control"></textarea>
+          </div>
+        </div>
+        <div class="form-group">
+          <lebel>结束时间</lebel>
+          <input type="date" name="class_end_time">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" onclick="newClass()">新建实验</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="edit_class_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">新建实验</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>实验名</label>
+          <input type="text" name="class_name" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>面向班级</label>
+            <?php
+            $class_list = $Db->query("SELECT S_class FROM Student GROUP BY S_class");
+            foreach ($class_list as $class) {
+                echo "<div class='label label-info' style='font-size: 20px;'><label>$class[S_class]: <input type='checkbox' name='class_for' value='$class[S_class]'></label></div>";
+            }
+            ?>
+        </div>
+        <div class="form-group">
+          <label>实验描述</label>
+          <div class="form-group">
+            <label>课前预习描述</label>
+            <textarea name="class_content" id="" cols="30" rows="10" class="form-control"></textarea>
+          </div>
+          <div class="form-group">
+            <label>课堂练习描述</label>
+            <textarea name="class_content" id="" cols="30" rows="10" class="form-control"></textarea>
+          </div>
+          <div class="form-group">
+            <label>课后练习描述</label>
+            <textarea name="class_content" id="" cols="30" rows="10" class="form-control"></textarea>
+          </div>
+        </div>
+        <div class="form-group">
+          <lebel>结束时间</lebel>
+          <input type="date" name="class_end_time">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" onclick="saveEdit()">保存修改</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
 <!-- REQUIRED JS SCRIPTS -->
 
 <!-- jQuery 3.2.1 -->
@@ -163,6 +267,61 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
 <script src="bootstrap/js/bootstrap.min.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/app.min.js"></script>
+
+<script>
+  function newClass() {
+    $.post('/admin/classes/new', {
+      class_name: getInputVal("new_class_modal", "class_name"),
+      class_content: getInputVal("new_class_modal", "class_content"),
+      class_end_time: getInputVal("new_class_modal", "class_end_time"),
+      class_for: getInputVal("new_class_modal", "class_for")
+    }, function () {
+      location.reload()
+    })
+  }
+
+  function edit(Id) {
+    $.get(`/admin/classes/get?class_id=${Id}`,function (data) {
+      let target = $("#edit_class_modal")
+      target.find("input[name=class_name]").val(data.C_name)
+      data.C_content = $.parseJSON(data.C_content)
+      target.find("textarea[name=class_content]").each(function (key,val) {
+        $(this).val(data.C_content[key])
+      })
+      data.C_for_classes = $.parseJSON(data.C_for_classes)
+      target.find("input[name=C_for]").each(function () {
+        data.C_for_classes.forEach(function (DBval) {
+          if (this.value === DBval) this.checked = true
+        })
+      })
+      console.log(new Date(data.C_end_time))
+      target.find("input[name=class_end_time]")[0].valueAsNumber = new Date(data.C_end_time).getTime()
+      target.modal()
+    })
+  }
+
+  function getInputVal(parent, name) {
+    let $input = $(`#${parent} input[name=${name}]`).length === 0 ? $(`#${parent} textarea[name=${name}]`) : $(`#${parent} input[name=${name}]`)
+    if ($input.length === 1) {
+      if ($input.attr("type") === "datetime-local") {
+        return new Date($input.val()).getTime() / 1000
+      }
+      return $input.val()
+    } else {
+      let value = []
+      $input.each(function () {
+        if ($(this).attr("type") === "checkbox") {
+          if ($(this)[0].checked) {
+            value.push(parseInt($(this).val()))
+          }
+        } else {
+          value.push($(this).val())
+        }
+      })
+      return JSON.stringify(value)
+    }
+  }
+</script>
 
 </body>
 </html>

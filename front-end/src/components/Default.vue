@@ -14,7 +14,7 @@
       </div>
       <div class="uploader-right">
         <div class="homework-name">
-          实验一
+          {{classInfo.C_name}}
         </div>
         <router-link :to="{name: 'Before',params: classInfo}">
           <div class="steep-each">
