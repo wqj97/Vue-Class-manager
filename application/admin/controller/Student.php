@@ -18,8 +18,8 @@ class Student
     {
         $class_id = input('get.class_id');
         $student_id = input('get.student_id');
-        $file_list = Db::query("select F_progress from File where F_for_class_id = ? and F_user_id = ?",[$class_id,$student_id]);
-        $progress = [false,false,false];
+        $file_list = Db::query("SELECT F_progress FROM File WHERE F_for_class_id = ? AND F_user_id = ?", [$class_id, $student_id]);
+        $progress = [false, false, false];
         foreach ($file_list as $item) {
             $progress[$item["F_progress"]] = true;
         }
@@ -31,19 +31,19 @@ class Student
         $class_id = input('post.class_id');
         $student_id = input('post.student_id');
         $progress_in = json_decode(input('post.progress'));
-        $file_list = Db::query("select F_progress from File where F_for_class_id = ? and F_user_id = ?",[$class_id,$student_id]);
-        $progress = [false,false,false];
+        $file_list = Db::query("SELECT F_progress FROM File WHERE F_for_class_id = ? AND F_user_id = ?", [$class_id, $student_id]);
+        $progress_Db = [false, false, false];
         foreach ($file_list as $item) {
-            $progress[$item["F_progress"]] = true;
+            $progress_Db[$item["F_progress"]] = true;
         }
-        var_dump($progress_in);
-        foreach ($progress as $key => $val) {
-            if ($progress_in[$key] == $val) {
-                echo "progress_in: $progress_in[$key] progress[key] $key: progress[val]$val \r\n";
-
-            } else {
-                echo " $progress_in[$key] ".$key.": ".$val." 不同";
-            }
+        $progress_get = [false,false,false];
+        $progress_diff = [];
+        foreach ($progress_in as $item) {
+            $progress_get[$item] = true;
+        }
+        foreach ($progress_Db as $key => $val) {
+//            if ($progress_Db)
+            //TODO: 对比$progress_Db 和 $progress_get 区别然后压入 $progress_diff
         }
     }
 }

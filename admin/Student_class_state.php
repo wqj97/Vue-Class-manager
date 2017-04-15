@@ -206,15 +206,15 @@ $class_id = isset($_GET["class_id"]) ? $_GET["class_id"] : $Db->query("SELECT C_
           <div class='label label-info' style='font-size: 20px;'>
             <label>
               课前:
-              <input type='checkbox' name='progress' value='true'>
+              <input type='checkbox' name='progress' value='0'>
             </label>
             <label>
               课中:
-              <input type='checkbox' name='progress' value='true'>
+              <input type='checkbox' name='progress' value='1'>
             </label>
             <label>
               课后:
-              <input type='checkbox' name='progress' value='true'>
+              <input type='checkbox' name='progress' value='2'>
             </label>
           </div>
         </div>
