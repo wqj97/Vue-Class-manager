@@ -155,10 +155,10 @@ $class_id = isset($_GET["class_id"]) ? $_GET["class_id"] : $Db->query("SELECT C_
                     if (empty($student_class_state)) {
                         return false;
                     }
-                    foreach ($student_class_state as $progress => $val) {
-                        if ($progress == $key) {
-                            return true;
-                        }
+                    foreach ($student_class_state as $stateKey => $val) {
+                      if($val["F_progress"] == $key) {
+                        return true;
+                      }
                     }
                     return false;
                 }

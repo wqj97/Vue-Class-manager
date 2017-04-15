@@ -36,14 +36,36 @@ class Student
         foreach ($file_list as $item) {
             $progress_Db[$item["F_progress"]] = true;
         }
-        $progress_get = [false,false,false];
+        $progress_get = [false, false, false];
         $progress_diff = [];
         foreach ($progress_in as $item) {
             $progress_get[$item] = true;
         }
         foreach ($progress_Db as $key => $val) {
-//            if ($progress_Db)
-            //TODO: 对比$progress_Db 和 $progress_get 区别然后压入 $progress_diff
+            if ($progress_Db[$key] == $progress_get[$key]) {
+                $progress_diff[] = "notModify";
+            } else {
+                if ($progress_Db[$key] == true && $progress_get[$key] == false) {
+                    $progress_diff[] = "minus";
+                } else {
+                    $progress_diff[] = "add";
+                }
+            }
         }
+        foreach ($progress_diff as $key => $operation) {
+            $file_info = Db::query("SELECT * FROM File WHERE F_progress = ? AND F_for_class_id = ? AND F_user_id = ?", [$key, $class_id, $student_id]);
+            switch ($operation) {
+                case "minus":
+                    if ($file_info[0]["F_src"] != '/upload/后台修改填充文件.zip') {
+                        unlink($file_info[0]["F_src"]);
+                    }
+                    Db::execute("DELETE FROM File WHERE F_Id = ?", [$file_info[0]["F_Id"]]);
+                    break;
+                case "add":
+                    Db::execute("INSERT INTO File (F_name, F_user_id, F_progress, F_for_class_id, F_src) VALUES (?,?,?,?,?)", ["后台修改填充文件.zip", $student_id, $key, $class_id, "/upload/后台修改填充文件.zip"]);
+                    break;
+            }
+        }
+        return json(["result" => "success"]);
     }
 }
