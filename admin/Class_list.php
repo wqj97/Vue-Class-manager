@@ -251,7 +251,7 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
-        <button type="button" class="btn btn-primary" onclick="saveEdit()">保存修改</button>
+        <button type="button" class="btn btn-primary" id="saveBtn" onclick="saveEdit()">保存修改</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -280,22 +280,36 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
     })
   }
 
+  function saveEdit(Id) {
+    $.post('/admin/classes/save?class_id=' + Id, {
+      class_name: getInputVal("new_class_modal", "class_name"),
+      class_content: getInputVal("new_class_modal", "class_content"),
+      class_end_time: getInputVal("new_class_modal", "class_end_time"),
+      class_for: getInputVal("new_class_modal", "class_for")
+    }, function () {
+      location.reload()
+    })
+  }
+
   function edit(Id) {
-    $.get(`/admin/classes/get?class_id=${Id}`,function (data) {
+    $.get(`/admin/classes/get?class_id=${Id}`, function (data) {
       let target = $("#edit_class_modal")
       target.find("input[name=class_name]").val(data.C_name)
       data.C_content = $.parseJSON(data.C_content)
-      target.find("textarea[name=class_content]").each(function (key,val) {
+      target.find("textarea[name=class_content]").each(function (key, val) {
         $(this).val(data.C_content[key])
       })
       data.C_for_classes = $.parseJSON(data.C_for_classes)
-      target.find("input[name=C_for]").each(function () {
+      target.find("input[name=class_for]").each(function () {
+        let $this = this
         data.C_for_classes.forEach(function (DBval) {
-          if (this.value === DBval) this.checked = true
+          if (parseInt($this.value) === DBval) $this.checked = true
         })
       })
       console.log(new Date(data.C_end_time))
+
       target.find("input[name=class_end_time]")[0].valueAsNumber = new Date(data.C_end_time).getTime()
+      $("#saveBtn").attr("onclick", `saveEdit(${Id}}`)
       target.modal()
     })
   }
@@ -320,6 +334,12 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
       })
       return JSON.stringify(value)
     }
+  }
+
+  function remove(Id) {
+    $.get(`/admin/classes/remove?file_id=${Id}`,function () {
+      window.location.reload()
+    })
   }
 </script>
 

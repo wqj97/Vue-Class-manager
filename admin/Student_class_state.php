@@ -2,6 +2,7 @@
 require_once "./SQL/Db.php";
 $Db = new Db();
 $start = isset($_GET['page']) ? $_GET['page'] : 0;
+$class_id = isset($_GET["class_id"]) ? $_GET["class_id"] : $Db->query("SELECT C_Id FROM Class ORDER BY C_Id DESC LIMIT 1")[0]["C_Id"];
 ?>
 <!DOCTYPE html>
 <html>
@@ -105,13 +106,16 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
         <div class="box-header">
           <h3 class="box-title">实验列表</h3>
           <h3>
-            <select class="form-control">
+            <select class="form-control" onchange="window.location='Student_class_state.php?class_id=' + this.value">
                 <?php
-                $class_list = $Db->query("SELECT * FROM Class WHERE C_end_time > current_timestamp()");
+                $class_list = $Db->query("SELECT * FROM Class ORDER BY C_Id DESC");
                 foreach ($class_list as $class) {
-                    echo "<option value='$class[C_Id]'>$class[C_name]</option>";
+                    echo "<option value='$class[C_Id]'";
+                    if ($class["C_Id"] == $class_id) {
+                        echo "selected";
+                    }
+                    echo ">$class[C_name]</option>";
                 }
-                $class_list = isset($_GET['class_id']) ? $_GET['class_id'] : $class_list[0];
                 ?>
             </select>
           </h3>
@@ -139,7 +143,8 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
             <tr>
                 <?php
                 $student_list = [];
-                foreach (json_decode($class_list["C_for_classes"]) as $classroomNum) {
+                $class_exact = $Db->query("select * from Class where C_Id = $class_id")[0];
+                foreach (json_decode($class_exact["C_for_classes"]) as $classroomNum) {
                     $student_list_In_db = $Db->query("select * from Student where S_class = $classroomNum ORDER BY S_class DESC");
                     foreach ($student_list_In_db as $studen_each) {
                         $student_list[] = $studen_each;
@@ -159,7 +164,7 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
                 }
 
                 foreach ($student_list as $student) {
-                    $student_class_state = $Db->query("select F_progress from File where F_user_id = $student[S_Id] and F_for_class_id = $class_list[C_Id]");
+                    $student_class_state = $Db->query("select F_progress from File where F_user_id = $student[S_Id] and F_for_class_id = $class_exact[C_Id]");
                     echo "<tr><td>$student[S_name]</td>";
                     for ($i = 0; $i < 3; $i++) {
                         if (isFinished($i, $student_class_state)) {
@@ -170,8 +175,8 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
                     }
                     echo "<td>
                     <div class=\"btn-group\">
-                      <button type=\"button\" class=\"btn btn-info\" onclick='edit($class[C_Id])'>修改</button>
-                      <button type=\"button\" class=\"btn btn-danger\" onclick='remove($class[C_Id])'>删除</button>
+                      <button type=\"button\" class=\"btn btn-info\" onclick='edit($student[S_Id])'>修改</button>
+                      <button type=\"button\" class=\"btn btn-primary\" onclick='download($student[S_Id])'>打包下载</button>
                     </div>
                   </td></tr>";
                 }
@@ -187,7 +192,42 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
   </div>
 </div>
 
-
+<div class="modal fade" id="edit_student_state">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">学生完成情况</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>课程完成情况</label>
+          <div class='label label-info' style='font-size: 20px;'>
+            <label>
+              课前:
+              <input type='checkbox' name='progress' value='true'>
+            </label>
+            <label>
+              课中:
+              <input type='checkbox' name='progress' value='true'>
+            </label>
+            <label>
+              课后:
+              <input type='checkbox' name='progress' value='true'>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-primary" id="saveBtn" onclick="saveEdit()">保存修改</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+</div>
 <!-- REQUIRED JS SCRIPTS -->
 
 <!-- jQuery 3.2.1 -->
@@ -196,6 +236,51 @@ $start = isset($_GET['page']) ? $_GET['page'] : 0;
 <script src="bootstrap/js/bootstrap.min.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/app.min.js"></script>
+
+<script>
+  function edit(Id) {
+    $.get(`/admin/Student/progress`, {
+      class_id:<?php echo $class_id?>,
+      student_id: Id
+    }, function (data) {
+      $('input[name=progress]').each(function () {
+        this.checked = data[this.value]
+      })
+      $("#saveBtn").attr("onclick", `saveEdit(${Id})`)
+      $("#edit_student_state").modal()
+    })
+  }
+
+  function saveEdit(Id) {
+    $.post(`/admin/Student/progress_update`, {
+      student_id: Id,
+      class_id:<?php echo $class_id?>,
+      progress: getInputVal('edit_student_state', 'progress')
+    })
+  }
+
+  function getInputVal(parent, name) {
+    let $input = $(`#${parent} input[name=${name}]`).length === 0 ? $(`#${parent} textarea[name=${name}]`) : $(`#${parent} input[name=${name}]`)
+    if ($input.length === 1) {
+      if ($input.attr("type") === "datetime-local") {
+        return new Date($input.val()).getTime() / 1000
+      }
+      return $input.val()
+    } else {
+      let value = []
+      $input.each(function () {
+        if ($(this).attr("type") === "checkbox") {
+          if ($(this)[0].checked) {
+            value.push(parseInt($(this).val()))
+          }
+        } else {
+          value.push($(this).val())
+        }
+      })
+      return JSON.stringify(value)
+    }
+  }
+</script>
 
 </body>
 </html>
